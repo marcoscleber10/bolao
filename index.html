@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolão da Copa do Mundo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .login-screen {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 50px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .login-screen h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+        
+        .login-screen input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .main-content {
+            display: none;
+        }
+        
+        .user-info {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .user-info h3 {
+            color: #1e3c72;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-box .value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .stat-box .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .rounds-selector {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .rounds-selector h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        
+        .rounds-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .round-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .round-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .round-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .bet-settings {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .bet-settings h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        
+        .bet-settings input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            width: 150px;
+        }
+        
+        .matches-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .match-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .match-info {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .match-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .status-open {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-closed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .team-flag {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .team-name {
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.1em;
+        }
+        
+        .score-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .score-input input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            color: #1e3c72;
+        }
+        
+        .score-input input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .score-separator {
+            font-size: 2em;
+            color: #999;
+            font-weight: bold;
+        }
+        
+        .match-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+        
+        .btn-suggest {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .suggestion-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .suggestion-box.show {
+            display: block;
+        }
+        
+        .suggestion-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .ranking {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .ranking h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+        
+        .ranking-list {
+            list-style: none;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ranking-position {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            width: 50px;
+        }
+        
+        .ranking-name {
+            flex: 1;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .ranking-points {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .teams {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .score-input {
+                margin: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Bolão da Copa do Mundo</h1>
+            <p>Faça seus palpites e concorra!</p>
+        </div>
+        
+        <!-- Tela de Login -->
+        <div class="login-screen" id="loginScreen">
+            <h2>🎯 Comece a Palpitar</h2>
+            <p style="margin-bottom: 20px; color: #666;">Digite seu nome para entrar no bolão</p>
+            <input type="text" id="userName" placeholder="Seu nome" maxlength="30">
+            <br>
+            <button class="btn" onclick="enterBolao()">Entrar no Bolão</button>
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <div class="main-content" id="mainContent">
+            <div class="user-info">
+                <div>
+                    <h3>👤 <span id="displayName"></span></h3>
+                    <p style="color: #666; font-size: 0.9em;">Modo demonstração - dados salvos no navegador</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="value" id="totalBets">0</div>
+                        <div class="label">Palpites</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="totalPoints">0</div>
+                        <div class="label">Pontos</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="totalSpent">$0</div>
+                        <div class="label">Apostado</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rounds-selector">
+                <h3>📅 Selecione a Rodada</h3>
+                <div class="rounds-buttons" id="roundsButtons"></div>
+            </div>
+            
+            <div class="bet-settings">
+                <h3>💰 Valor por Palpite</h3>
+                <p style="color: #666; margin-bottom: 10px;">Defina quanto vale cada palpite (em dólares)</p>
+                <input type="number" id="betValue" value="1" min="0.1" step="0.1" onchange="updateStats()">
+            </div>
+            
+            <div class="matches-container" id="matchesContainer"></div>
+            
+            <div class="ranking">
+                <h3>🏆 Ranking</h3>
+                <ul class="ranking-list" id="rankingList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos jogos da Copa
+        const matchesData = {
+            1: [
+                { id: 1, team1: 'Brasil', flag1: '🇧🇷', team2: 'Alemanha', flag2: '🇩🇪', date: '20/06/2026', time: '16:00' },
+                { id: 2, team1: 'Argentina', flag1: '🇦🇷', team2: 'França', flag2: '🇫🇷', date: '20/06/2026', time: '19:00' },
+                { id: 3, team1: 'Inglaterra', flag1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Espanha', flag2: '🇪🇸', date: '21/06/2026', time: '16:00' }
+            ],
+            2: [
+                { id: 4, team1: 'Brasil', flag1: '🇧🇷', team2: 'Argentina', flag2: '🇦🇷', date: '24/06/2026', time: '16:00' },
+                { id: 5, team1: 'Alemanha', flag1: '🇩🇪', team2: 'França', flag2: '🇫🇷', date: '24/06/2026', time: '19:00' },
+                { id: 6, team1: 'Espanha', flag1: '🇪🇸', team2: 'Portugal', flag2: '🇵🇹', date: '25/06/2026', time: '16:00' }
+            ],
+            3: [
+                { id: 7, team1: 'Brasil', flag1: '🇧🇷', team2: 'França', flag2: '🇫🇷', date: '28/06/2026', time: '16:00' },
+                { id: 8, team1: 'Argentina', flag1: '🇦🇷', team2: 'Alemanha', flag2: '🇩🇪', date: '28/06/2026', time: '19:00' },
+                { id: 9, team1: 'Inglaterra', flag1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Portugal', flag2: '🇵🇹', date: '29/06/2026', time: '16:00' }
+            ],
+            4: [
+                { id: 10, team1: 'Quartas 1', flag1: '🏆', team2: 'Quartas 2', flag2: '🏆', date: '02/07/2026', time: '16:00' },
+                { id: 11, team1: 'Quartas 3', flag1: '🏆', team2: 'Quartas 4', flag2: '🏆', date: '02/07/2026', time: '19:00' },
+                { id: 12, team1: 'Quartas 5', flag1: '🏆', team2: 'Quartas 6', flag2: '🏆', date: '03/07/2026', time: '16:00' },
+                { id: 13, team1: 'Quartas 7', flag1: '🏆', team2: 'Quartas 8', flag2: '🏆', date: '03/07/2026', time: '19:00' }
+            ]
+        };
+
+        let currentUser = '';
+        let currentRound = 1;
+        let userBets = {};
+        let ranking = [];
+
+        // Inicialização
+        window.onload = function() {
+            loadFromStorage();
+            if (currentUser) {
+                showMainContent();
+            }
+        };
+
+        function enterBolao() {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert('Por favor, digite seu nome!');
+                return;
+            }
+            currentUser = name;
+            saveToStorage();
+            showMainContent();
+        }
+
+        function showMainContent() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('displayName').textContent = currentUser;
+            loadUserBets();
+            renderRounds();
+            renderMatches();
+            renderRanking();
+            updateStats();
+        }
+
+        function renderRounds() {
+            const container = document.getElementById('roundsButtons');
+            container.innerHTML = '';
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'round-btn' + (i === currentRound ? ' active' : '');
+                btn.textContent = `Rodada ${i}`;
+                btn.onclick = () => selectRound(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function selectRound(round) {
+            currentRound = round;
+            renderRounds();
+            renderMatches();
+        }
+
+        function renderMatches() {
+            const container = document.getElementById('matchesContainer');
+            container.innerHTML = '';
+            const matches = matchesData[currentRound] || [];
+            
+            matches.forEach(match => {
+                const bet = userBets[match.id] || {};
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.innerHTML = `
+                    <div class="match-header">
+                        <div class="match-info">📅 ${match.date} às ${match.time}</div>
+                        <div class="match-status status-open">Aberto</div>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            <div class="team-flag">${match.flag1}</div>
+                            <div class="team-name">${match.team1}</div>
+                        </div>
+                        <div class="score-input">
+                            <input type="number" min="0" max="20" id="score1_${match.id}" 
+                                   value="${bet.score1 || ''}" onchange="saveBet(${match.id})">
+                            <span class="score-separator">×</span>
+                            <input type="number" min="0" max="20" id="score2_${match.id}" 
+                                   value="${bet.score2 || ''}" onchange="saveBet(${match.id})">
+                        </div>
+                        <div class="team">
+                            <div class="team-flag">${match.flag2}</div>
+                            <div class="team-name">${match.team2}</div>
+                        </div>
+                    </div>
+                    <div class="match-actions">
+                        <button class="btn btn-small btn-suggest" onclick="showSuggestion(${match.id})">💡 Sugestão</button>
+                        <button class="btn btn-small btn-save" onclick="saveBet(${match.id})">💾 Salvar</button>
+                    </div>
+                    <div class="suggestion-box" id="suggestion_${match.id}">
+                        <h4>💡 Sugestões de Palpite:</h4>
+                        <p id="suggestionText_${match.id}"></p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function saveBet(matchId) {
+            const score1 = parseInt(document.getElementById(`score1_${matchId}`).value) || 0;
+            const score2 = parseInt(document.getElementById(`score2_${matchId}`).value) || 0;
+            
+            userBets[matchId] = { score1, score2, timestamp: Date.now() };
+            saveToStorage();
+            updateStats();
+            
+            // Feedback visual
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Salvo!';
+            setTimeout(() => btn.textContent = originalText, 1500);
+        }
+
+        function showSuggestion(matchId) {
+            const box = document.getElementById(`suggestion_${matchId}`);
+            const text = document.getElementById(`suggestionText_${matchId}`);
+            
+            const suggestions = [
+                'Vitória apertada: 2x1',
+                'Empate: 1x1',
+                'Goleada: 3x0',
+                'Jogo equilibrado: 2x2',
+                'Vitória mínima: 1x0'
+            ];
+            
+            const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            text.textContent = `Que tal apostar em: ${randomSuggestion}?`;
+            box.classList.add('show');
+        }
+
+        function updateStats() {
+            const betValue = parseFloat(document.getElementById('betValue').value) || 1;
+            const totalBets = Object.keys(userBets).length;
+            const totalSpent = totalBets * betValue;
+            const totalPoints = calculatePoints();
+            
+            document.getElementById('totalBets').textContent = totalBets;
+            document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(2)}`;
+            document.getElementById('totalPoints').textContent = totalPoints;
+        }
+
+        function calculatePoints() {
+            let points = 0;
+            Object.values(userBets).forEach(bet => {
+                if (bet.score1 !== undefined && bet.score2 !== undefined) {
+                    points += 10; // 10 pontos por palpite completo
+                }
+            });
+            return points;
+        }
+
+        function renderRanking() {
+            const container = document.getElementById('rankingList');
+            container.innerHTML = '';
+            
+            // Ranking simulado com o usuário atual
+            const fakeRanking = [
+                { name: 'João Silva', points: 150 },
+                { name: 'Maria Santos', points: 140 },
+                { name: currentUser, points: calculatePoints() },
+                { name: 'Pedro Costa', points: 120 },
+                { name: 'Ana Oliveira', points: 110 }
+            ].sort((a, b) => b.points - a.points);
+            
+            fakeRanking.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'ranking-item';
+                const isCurrentUser = item.name === currentUser;
+                li.style.background = isCurrentUser ? '#f0f8ff' : 'white';
+                li.innerHTML = `
+                    <div class="ranking-position">${index + 1}º</div>
+                    <div class="ranking-name">${item.name} ${isCurrentUser ? '(você)' : ''}</div>
+                    <div class="ranking-points">${item.points} pts</div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function saveToStorage() {
+            const data = {
+                currentUser,
+                userBets,
+                currentRound
+            };
+            localStorage.setItem('bolaoCopa', JSON.stringify(data));
+        }
+
+        function loadFromStorage() {
+            const data = localStorage.getItem('bolaoCopa');
+            if (data) {
+                const parsed = JSON.parse(data);
+                currentUser = parsed.currentUser || '';
+                userBets = parsed.userBets || {};
+                currentRound = parsed.currentRound || 1;
+            }
+        }
+
+        function loadUserBets() {
+            // Carrega os palpites salvos
+            Object.keys(userBets).forEach(matchId => {
+                const bet = userBets[matchId];
+                const score1Input = document.getElementById(`score1_${matchId}`);
+                const score2Input = document.getElementById(`score2_${matchId}`);
+                if (score1Input) score1Input.value = bet.score1 || '';
+                if (score2Input) score2Input.value = bet.score2 || '';
+            });
+        }
+
+        // Enter key no login
+        document.getElementById('userName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enterBolao();
+        });
+    </script>
+</body>
+</html>
